@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,15 +10,14 @@ from spacy.tokens import Doc
 @dataclass
 class Annotations():
     df: pd.DataFrame
-    threshold: float = 0.9
     similarity_measure: str = "cosine"
     save: bool = False
     lemmatize: bool = False
     nlp = spacy.load("en_core_web_lg")
+
     def __post_init__(self):
         self.df = self.embed()
         self.df = self.similarities()
-        self.df = self.extract_most_similar()
 
     def embed(self) -> pd.DataFrame:
         """Embed cleaned annotations to a documents."""
@@ -59,16 +58,16 @@ class Annotations():
         tmp_string = " ".join([token.lemma_ for token in annotation])
         return self.nlp(tmp_string)
 
-    def mean_vector_(self, row: pd.DataFrame) -> np.ndarray:
+    def mean_vector_(self, row: pd.DataFrame, threshold: float) -> np.ndarray:
         """Take the mean vector across the selected similarity threshold."""
         similarities = np.asarray(row["similarities"])
         if self.lemmatize:
-            #mean_vector = self.df[similarities>=self.threshold]["doc"].apply(lambda x: self.lemmatize_doc(x).vector).mean()
-            doc_series = self.df[similarities>=self.threshold]["doc"].to_list()
+            #mean_vector = self.df[similarities>=threshold]["doc"].apply(lambda x: self.lemmatize_doc(x).vector).mean()
+            doc_series = self.df[similarities>=threshold]["doc"].to_list()
             mean_vector = self.lemmatize_doc(Doc.from_docs(doc_series)).vector
         else:
-            #mean_vector = self.df[similarities>=self.threshold]["doc"].apply(lambda x: x.vector).mean()
-            doc_series = self.df[similarities>=self.threshold]["doc"].to_list()
+            #mean_vector = self.df[similarities>=threshold]["doc"].apply(lambda x: x.vector).mean()
+            doc_series = self.df[similarities>=threshold]["doc"].to_list()
             mean_vector = Doc.from_docs(doc_series).vector
         return mean_vector
 
@@ -77,10 +76,10 @@ class Annotations():
         most_similar, _, distances = self.nlp.vocab.vectors.most_similar(row.mean_vector[np.newaxis], n=1)
         return self.nlp.vocab.strings[most_similar[0][0]].lower()
 
-    def extract_most_similar(self) -> pd.DataFrame:
+    def extract_most_similar(self, threshold: float) -> pd.DataFrame:
         """Appends the relevant data derivatives to the data frame."""
         df = self.df.copy()
-        df['mean_vector']  = df.apply(lambda row: self.mean_vector_(row), axis=1)
+        df['mean_vector']  = df.apply(lambda row: self.mean_vector_(row, threshold), axis=1)
         df['most_similar'] = df.apply(lambda row: self.most_similar_(row), axis=1)
         return df
 
@@ -91,23 +90,21 @@ class Annotations():
 def main():
     df = pd.read_csv("../data/english_annotations_cleaned.csv", index_col=0).dropna()
     thresholds = np.linspace(start=0.5, stop=1., num=11, endpoint=True)
-    print(thresholds)
-    lemmatize=True
-    enc = Annotations(df, threshold=0.8, lemmatize=lemmatize)
+    lemmatize=False
+    enc = Annotations(df, lemmatize=lemmatize)
     #enc.similarities_histogram(save="./similarities_histogram.png")
     for threshold in thresholds:
         print(f">>> Threshold {threshold}")
-        enc.threshold = threshold
-        enc.extract_most_similar()
+        df = enc.extract_most_similar(threshold)
         print(f">>> Unique Classes:")
-        print(f"{enc.df['most_similar'].unique().shape}, {enc.df['most_similar'].unique()}")
-        codes, unique = enc.df["most_similar"].factorize() ### < --- Can I use this to encode annotations / classifications?
-        enc.df["codes"] = codes
-        tmp = enc.df.drop(columns=["doc", "mean_vector", "similarities"])
+        print(f"{df['most_similar'].unique().shape}, {df['most_similar'].unique()}")
+        codes, unique = df["most_similar"].factorize()
+        df["codes"] = codes
+        tmp = df.drop(columns=["doc", "mean_vector", "similarities"])
         if lemmatize:
-            tmp.to_csv(f"../data/lemmatization/derived_terms_{threshold}.csv")
+            tmp.to_csv(f"../data/lemmatization/derived_terms_{threshold:.2f}.csv")
         else:
-            tmp.to_csv(f"../data/no_lemmatization/derived_terms_{threshold}.csv")
+            tmp.to_csv(f"../data/no_lemmatization/derived_terms_{threshold:.2f}.csv")
 
     print(">>> Finished")
 

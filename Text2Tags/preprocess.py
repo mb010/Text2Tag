@@ -17,6 +17,7 @@ def raw_to_public(data_path: str, outpath: str, force: bool=False):
 
     df['annotations'] = [json.loads(annotation)[0]['value'] for annotation in df['annotations']]
     if "expert" in outpath:
+        df.replace(to_replace=r'\*', value='', regex=True)
         df['annotations'] = df['annotations'].str.join(",")
     df.to_csv(outpath)
     return

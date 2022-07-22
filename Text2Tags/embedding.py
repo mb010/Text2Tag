@@ -62,11 +62,9 @@ class Annotations():
         """Take the mean vector across the selected similarity threshold."""
         similarities = np.asarray(row["similarities"])
         if self.lemmatize:
-            #mean_vector = self.df[similarities>=threshold]["doc"].apply(lambda x: self.lemmatize_doc(x).vector).mean()
             doc_series = self.df[similarities>=threshold]["doc"].to_list()
             mean_vector = self.lemmatize_doc(Doc.from_docs(doc_series)).vector
         else:
-            #mean_vector = self.df[similarities>=threshold]["doc"].apply(lambda x: x.vector).mean()
             doc_series = self.df[similarities>=threshold]["doc"].to_list()
             mean_vector = Doc.from_docs(doc_series).vector
         return mean_vector
@@ -101,10 +99,8 @@ def main():
         codes, unique = df["most_similar"].factorize()
         df["codes"] = codes
         tmp = df.drop(columns=["doc", "mean_vector", "similarities"])
-        if lemmatize:
-            tmp.to_csv(f"../data/lemmatization/derived_terms_{threshold:.2f}.csv")
-        else:
-            tmp.to_csv(f"../data/no_lemmatization/derived_terms_{threshold:.2f}.csv")
+        lem = "lemmatization" if lemmatize else "no_lemmatization"
+        tmp.to_csv(f"../data/{lem}/derived_terms_{threshold:.2f}.csv")
 
     print(">>> Finished")
 

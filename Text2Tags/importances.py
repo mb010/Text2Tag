@@ -69,7 +69,7 @@ class Importances():
         the model."""
         target_counts = self.count(self.df_Y)[:,np.newaxis]
         df = {
-            "annotations": self.df_X.encoding.keys(), # Annotations
+            "annotations": self.df_X.encoding.keys(),
             "count": self.count(self.df_X),
         }
 
@@ -151,49 +151,9 @@ class Importances():
         df = {
             "annotation": [key for key, value in self.df_Y.encoding.items()],
             "count": self.count(self.df_Y),
-            "index": [values for key, value in self.df_Y.encoding.items()]
+            "index": [value for key, value in self.df_Y.encoding.items()]
         }
         return pd.DataFrame(df)
-
-
-def correlations():
-    """Visualise and / or find a way to deal with tags which are strongly
-    correlated."""
-    raise NotImplementedError("Correclation calculations not yet implemented.")
-
-def plot_importances(clf, df: pd.DataFramesummary, save: None | str=None) -> None:
-    """Make a pretty plot of the importances and the occurances of the tags."""
-    raise NotImplementedError("Plotting not yet implemented.")
-    top_ranked = pd.DataFrame({
-        "most_similar_importances": clf.feature_importances_,
-        "most_similar":df.most_similar.unique(),
-        "counts": df.most_similar.value_counts().to_numpy()
-    })
-    top = top_ranked.sort_values('most_similar_importances', ascending=False).reset_index(drop=True)
-    uniform_sampling_threshold = 1/top.most_similar_importances.shape[0]
-
-    fig, ax = plt.subplots(figsize=(20,5))
-    ax.scatter(
-        np.arange(top.most_similar_importances.shape[0]),
-        top.most_similar_importances,
-        s=0.1*top.counts.to_numpy(),
-        c=np.linspace(0,1,top.most_similar.shape[0])
-    )
-    ax.set_xticks(np.arange(top.most_similar_importances.shape[0]), top.most_similar, rotation=90)
-    ax.grid()
-    ax.axhline(
-        uniform_sampling_threshold,
-        linestyle='--', c='red',
-        label=f'Uniform importance: {top.most_similar_importances[top.most_similar_importances>uniform_sampling_threshold].shape[0]} terms'
-    )
-    ax.axvline(10.5, linestyle='dashdot', c='black', label=f'Top 10')
-    ax.legend()
-    ax.set_title(f"Importances of Derived Tags for Science Classifications (trained on composite classes)")
-    ax.set_xlabel(f"Derived Tags")
-    ax.set_ylabel(f"Feature Importance")
-    plt.show()
-
-    top.head(15)
 
 def single_main_call(
         lemmatization: bool, similarity_threshold: float, expert_threshold: float
@@ -209,7 +169,8 @@ def single_main_call(
     df_X = EncodedData(df_X)
     df_Y = EncodedData(
         pd.read_csv("../data/expert_classifications.csv", index_col=0),
-        agreement=expert_threshold/5
+        agreement=expert_threshold,
+        weighting="custom_domain_weighting"
     )
     im = Importances(df_X, df_Y)
     return im
@@ -218,7 +179,7 @@ def main():
     # Parameters to iterate over for ablation studies
     lemmatizations        = [True, False]
     similarity_thresholds = np.linspace(start=0.5, stop=1., num=11, endpoint=True)
-    expert_thresholds     = np.linspace(start=1, stop=4, num=4, endpoint=True)
+    expert_thresholds     = np.linspace(start=0.2, stop=0.8, num=4, endpoint=True)
 
     overview_dict_entries = [
         "lemmatization", "similarity_threshold", "expert_threshold",
@@ -243,12 +204,16 @@ def main():
             for expert_threshold in expert_thresholds:
                 # Load in target data & extract encoding table
                 df_Y = pd.read_csv("../data/expert_classifications.csv", index_col=0)
-                df_Y = EncodedData(df_Y, agreement=expert_threshold/5)
+                df_Y = EncodedData(
+                    df_Y,
+                    agreement=expert_threshold,
+                    weighting="custom_domain_weighting"
+                )
                 importances = Importances(df_X, df_Y)
                 #return importances
                 # Add to output data frame
                 df = importances.feature_summary()
-                df.to_csv(f"../data/{lem}/importances_{similarity_threshold:.2f}_{expert_threshold}.csv")
+                df.to_csv(f"../data/{lem}/importances_{similarity_threshold:.2f}_{expert_threshold:.1f}.csv")
 
                 # Save evaluation / iteration to DataFrame
                 overview_dict["tag_count"].append(df_X.class_count)
@@ -258,9 +223,9 @@ def main():
                 overview_dict["weighted_f1"].append(importances.scores["weighted_f1"])
                 overview_dict["macro_f1"].append(importances.scores["micro_f1"])
 
-    # Save oob metrics
-    df = pd.DataFrame(overview_dict)
-    df.to_csv("../data/results_overviews.csv")
+                # Save oob metrics
+                df = pd.DataFrame(overview_dict)
+                df.to_csv("../data/results_overviews.csv")
 
 
 if __name__ == "__main__":

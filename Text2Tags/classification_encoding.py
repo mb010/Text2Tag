@@ -35,7 +35,6 @@ class EncodedData():
         if self.multiple_classifications_handling not in ["first", "last"]:
             raise NotImplementedError # Would have to process afterwards for a custom function as encodings have not yet been generated at this point.
             agg["annotations"] = lambda x: ",".join(x)
-
         self.df = self.df.groupby(["user_id", "subject_ids"]).agg(agg).reset_index()
         return
 
@@ -43,7 +42,6 @@ class EncodedData():
         """Returns the classifications for target sources, using the weighting
         and agreement parameters."""
         df = self.df.copy()
-        #df = df.explode(self.mapping, ignore_index=True) # Was this tested on anything? Seems to be replaced with my corrections to encoding.
         df = df.groupby(["classification_id"]).agg({
             "subject_ids": "first",
             self.mapping: lambda x: np.sum(x)
@@ -56,6 +54,17 @@ class EncodedData():
         }).reset_index(drop=True)
         if self.weighting == "uniform":
             df[self.mapping] = df[self.mapping]/df['count']
+        elif self.weighting == "custom_domain_weighting":
+            science_class_weighting = np.ones(self.class_count)
+            invalid_science_classes = [
+                "Compact Symmetric Object (CSO)", # Need spectral data to use
+                "Fanaroff and Riley Class 0 (FR 0)", # Not well defined
+                "Single" # Doesnt give more information than other tags.
+            ]
+            for cls in invalid_science_classes:
+                science_class_weighting[self.encoding[cls]] = 0
+            df[self.mapping] = df[self.mapping].apply(lambda x: x*science_class_weighting)
+            df[self.mapping] = df[self.mapping] / df['count']
         elif callable(self.weighting):
             df[self.mapping] = df[self.mapping].apply(self.weighting)
         else:

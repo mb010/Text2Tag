@@ -58,6 +58,8 @@ class EncodedData():
             science_class_weighting = np.ones(self.class_count)
             invalid_science_classes = [
                 "Compact Symmetric Object (CSO)", # Need spectral data to use
+                #"Fanaroff & Riley Class 0 (FR 0*)", # Not well defined
+                ## For regex checking manually alter entries to be "and" instead of "&".
                 "Fanaroff and Riley Class 0 (FR 0)", # Not well defined
                 "Single" # Doesnt give more information than other tags.
             ]

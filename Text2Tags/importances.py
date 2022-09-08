@@ -218,8 +218,8 @@ def main():
                 # Save evaluation / iteration to DataFrame
                 overview_dict["tag_count"].append(df_X.class_count)
                 overview_dict["lemmatization"].append(lem)
-                overview_dict["similarity_threshold"].append(similarity_threshold)
-                overview_dict["expert_threshold"].append(expert_threshold)
+                overview_dict["similarity_threshold"].append(similarity_threshold.round(2))
+                overview_dict["expert_threshold"].append(expert_threshold.round(1))
                 overview_dict["weighted_f1"].append(importances.scores["weighted_f1"])
                 overview_dict["macro_f1"].append(importances.scores["micro_f1"])
 

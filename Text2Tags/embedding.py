@@ -85,10 +85,9 @@ class Annotations():
         df = pd.get_dummies(self.df["most_similar"], prefix='ms')
         return df
 
-def main():
+def main(lemmatize=False):
     df = pd.read_csv("../data/english_annotations_cleaned.csv", index_col=0).dropna()
     thresholds = np.linspace(start=0.5, stop=1., num=11, endpoint=True)
-    lemmatize=False
     enc = Annotations(df, lemmatize=lemmatize)
     #enc.similarities_histogram(save="./similarities_histogram.png")
     for threshold in thresholds:

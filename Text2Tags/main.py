@@ -11,8 +11,8 @@ import preprocess
 import importances
 
 def main():
-    #preprocess.main()
-    #classification_encoding.main()
+    preprocess.main()
+    classification_encoding.main()
     embedding.main(lemmatize=True)
     importances.main()
 

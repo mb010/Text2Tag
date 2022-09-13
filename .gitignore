@@ -3,6 +3,7 @@ data/raw*
 data/*.csv
 data/lemmatization
 data/no_lemmatization
+data/cutouts
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

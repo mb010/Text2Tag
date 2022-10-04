@@ -1,5 +1,13 @@
+# Notebooks
+UserAnalysis.ipynb
+tag_no_boxes_repetitive_classification_detection.ipynb
+subject_id_and_coordinates_cross_match.ipynb
+
+
 # Data
+*.png
 data/raw*
+data/cutouts
 data/*.csv
 data/lemmatization
 data/no_lemmatization

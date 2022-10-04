@@ -48,7 +48,7 @@ def original_annotation_summary(
     print(text)
 
 def return_subject_id_mapper(raw_data):
-    """Takes dataframe of zooniverse data and returns a 
+    """Takes dataframe of zooniverse data and returns a
     dict which maps subject ids to file names."""
     mapping = {}
     subject_data = [json.loads(q) for q in raw_data['subject_data']]

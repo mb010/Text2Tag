@@ -90,6 +90,9 @@ def population_summary(
     """Dirty cutout recovery function. Not fully acurate and does not use
     derived taxonomy, but rather intermediary derived tags.
     E.g. 'trace' instead of 'traces host galaxy'
+    Cutout png data must be saved in data/cutouts/ for this function to
+    operate correctly. Cutout file names must follow J123456+123456_overlay.png
+    
     """
     if derived_tags=="default":
         derived_tags = [

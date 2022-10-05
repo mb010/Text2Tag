@@ -5,13 +5,14 @@ subject_id_and_coordinates_cross_match.ipynb
 
 
 # Data
-*.png
 data/raw*
-data/cutouts
-data/*.csv
-data/lemmatization
-data/no_lemmatization
-data/cutouts
+data/cutouts/*
+data/lemmatization/*
+data/no_lemmatization/*
+
+!*/
+!data/lemmatization/derived_terms_0.80.csv
+!*/lemmatization/derived_terms_0.80.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

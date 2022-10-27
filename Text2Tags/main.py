@@ -1,6 +1,5 @@
 """
-'Radio Galaxy Zoo: EMU - Towards a Semantically Meaningful Radio
-Morphology Ontology'
+'Radio Galaxy Zoo EMU: Towards a Semantic Radio Galaxy Morphology Taxonomy'
 
 Run the pipeline from this script to create the
 data prodcuts used in Bowles+22.

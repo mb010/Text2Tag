@@ -75,11 +75,11 @@ class EncodedData():
         return df[["subject_ids", self.mapping, "count"]].sort_values(by=['subject_ids'], ignore_index=True)
 
     def num_to_str(self, number: int) -> str:
-        string = self.decoding(number)
+        string = self.decoding[number]
         return string
 
     def str_to_num(self, string: str) -> int:
-        number = self.encoding(string)
+        number = self.encoding[string]
         return number
 
     def encode(self) -> dict:

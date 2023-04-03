@@ -85,6 +85,7 @@ def population_summary(
                 index_col=0),
         save=False,
         print_auxiliary=False,
+        return_auxiliary=False,
         id_map="default"
     ):
     """Dirty cutout recovery function. Not fully acurate and does not use
@@ -94,6 +95,8 @@ def population_summary(
     operate correctly. Cutout file names must follow J123456+123456_overlay.png
     
     """
+    if return_auxiliary:
+        out = {}
     if derived_tags=="default":
         derived_tags = [
             "trace", "double","asymmetric","extend","amorphous",
@@ -142,6 +145,9 @@ def population_summary(
             image_tags.sort()
             print(file)
             print(f"Tags assgigned to this target: ", image_tags)
+        if return_auxiliary:
+            image_tags.sort()
+            out[file] = image_tags
         with Image.open(f"./data/cutouts/{file}") as im:
             fig, ax = plt.subplots(figsize=(20,5))
             ax.imshow(im)
@@ -151,3 +157,5 @@ def population_summary(
                     f"./data/cutouts/subsets/{tag_folder}/{'_'.join(image_tags)}_{file}",
                     bbox_inches='tight', pad_inches=0)
             plt.show()
+    if return_auxiliary:
+        return out

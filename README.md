@@ -1,7 +1,7 @@
 # Text2Tag
 Code base for the analysis presented in:
 - [Bowles+2022 "A New Task: Deriving Semantic Class Targets for the Physical Sciences", accepted at NeurIPS 2022, Machine Learning and the Physical Sciences Workshop at the 36th Conference on Neural Information Processing Systems](https://arxiv.org/abs/2210.14760)
-- Bowles+22 "Radio Galaxy Zoo EMU: Towards a Semantic Radio Galaxy Morphology Taxonomy", submitted to MNRAS.
+- [Bowles+2023 "Radio galaxy zoo EMU: Towards a semantic radio galaxy morphology taxonomy", Monthly Notices of the Royal Astronomical Society](https://doi.org/10.1093/mnras/stad1021).
 
 The full data used in these works is available [on this zenodo](https://zenodo.org/record/7254123#.Y3d5EdLP2xE) including all of the composite cutouts of galaxies presented to citizen scientists.
 

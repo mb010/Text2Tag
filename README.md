@@ -30,7 +30,24 @@ The [utils.py](./Text2Tags/utils.py) module contains helper functions to
 summarise and show original annotations which formed a given entry.
 
 # Citing
-For now, to cite this work (incl. code / data) please cite:
+To cite this work (incl. code / data) please cite one or both of the following:
+
+```
+@article{Bowles2023SemanticTags,
+    author = {Bowles, Micah and Tang, Hongming and Vardoulaki, Eleni and Alexander, Emma L and Luo, Yan and Rudnick, Lawrence and Walmsley, Mike and Porter, Fiona and Scaife, Anna M M and Slijepcevic, Inigo Val and Adams, Elizabeth A K and Drabent, Alexander and Dugdale, Thomas and Gürkan, Gülay and Hopkins, Andrew M and Jimenez-Andrade, Eric F and Leahy, Denis A and Norris, Ray P and Rahman, Syed Faisal ur and Ouyang, Xichang and Segal, Gary and Shabala, Stanislav S and Wong, O Ivy},
+    title = "{Radio galaxy zoo EMU: towards a semantic radio galaxy morphology taxonomy}",
+    journal = {Monthly Notices of the Royal Astronomical Society},
+    volume = {522},
+    number = {2},
+    pages = {2584-2600},
+    year = {2023},
+    month = {04},
+    issn = {0035-8711},
+    doi = {10.1093/mnras/stad1021},
+    url = {https://doi.org/10.1093/mnras/stad1021},
+    eprint = {https://academic.oup.com/mnras/article-pdf/522/2/2584/50119421/stad1021.pdf},
+}
+```
 ```
 @ARTICLE{Bowles2022_SemanticTags,
        author = {{Bowles}, Micah and {Tang}, Hongming and {Vardoulaki}, Eleni and {Alexander}, Emma L. and {Luo}, Yan and {Rudnick}, Lawrence and {Walmsley}, Mike and {Porter}, Fiona and {Scaife}, Anna M.~M. and {Slijepcevic}, Inigo Val and {Segal}, Gary},
